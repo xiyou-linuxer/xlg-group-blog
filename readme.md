@@ -80,9 +80,15 @@
 
 3. 根据实际情况更改 `resource/config/view` 下面的配置文件设置站点和关于页面的数据信息
 
-4. 使用 Maven 打包项目为 jar 包
+4. 执行 `server/bin/importCert.sh` 注意根据不同的发行版更改第一条命令(或者直接去看脚本，手动执行)
 
-5. 运行：
+5. 更改`server/src/main/resources/application.yml`和`server/src/main/resources/rome.properties`
+中的路径
+
+6. 使用 Maven 打包项目为 jar 包
+(碰到error时，如果error很少，且看起来没有致命错误，可以使用-DskipTests跳过maven的测试)
+
+7. 运行：
 
    ```shell
    nohup java -jar -Dconfig-dir="[配置文件目录]" [jar包路径] > nohup.log &
