@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     # 返回影响的行数，设置时区为【上海】
-    url:               jdbc:mysql://47.94.5.149:3306/group_blog?useAffectedRows=true&serverTimezone=Asia/Shanghai
+    url:               jdbc:mysql://127.0.0.1:3306/group_blog?useAffectedRows=true&serverTimezone=Asia/Shanghai
     username:          group_blog
     password:          grouppass
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -59,4 +59,4 @@ pagehelper:
   reasonable: true
 
 # 配置文件位置
-config-dir: "/home/xuanc/桌面/GroupBlog/server/src/main/resources/config"
+config-dir: "/xlg-group-blog/server/src/main/resources/config"
