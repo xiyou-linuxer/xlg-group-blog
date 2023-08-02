@@ -36,4 +36,7 @@ hs_err_pid*
 logs/ 
 **/target/*
 classes/
-createDocker
+
+server/createDocker/my
+server/createDocker/blog
+server/createDocker/init.sql

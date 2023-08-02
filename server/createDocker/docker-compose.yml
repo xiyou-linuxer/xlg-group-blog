@@ -1,0 +1,34 @@
+version: '3'
+networks:
+  blog_xiyouLinux_network:
+    driver: bridge
+
+services:
+  db:
+    image: mysql:latest
+    ports:
+      - "3307:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Linux_Group_Server
+      MYSQL_DATABASE: group_blog
+      MYSQL_USER: xiyouLinux
+      MYSQL_PASSWORD: LinuxGroup
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - blog_xiyouLinux_network
+    expose:
+      - 3306
+  blog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 9090:6789
+    depends_on:
+      - db
+    networks:
+      - blog_xiyouLinux_network
+    volumes:
+      - ./../group_blog_picture:/xlg-group-blog-server/picture

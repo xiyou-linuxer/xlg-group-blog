@@ -27,8 +27,8 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
         }
     });
 
-    // let domain = "https://blog.xiyoulinux.com/";
-    let domain = "http://127.0.0.1:6789/";
+    let domain = "https://blog.xiyoulinux.com/";
+    // let domain = "http://127.0.0.1:6789/";
     let getQQImage = function (qq) {
         let qqImageApiPrefix = "https://q1.qlogo.cn/g?b=qq&nk=";
         let qqImageApiSuffix = "&s=100";
@@ -264,7 +264,8 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
     // 更新博客参数
     $(document).on('click', '#submit', function () {
         console.log(table.cache['type_param']);
-        let blog_type = form.val('type').blog_type;
+        // let blog_type = form.val('type').blog_type;
+        let blog_type = blogId;
         let params = table.cache['type_param'];
         let reqParams = {};
         if (blog_type == null || blog_type === '') {

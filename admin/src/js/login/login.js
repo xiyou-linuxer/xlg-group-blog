@@ -24,8 +24,8 @@ layui.use(['element', 'layer'], function () {
         console.log(req_data);
 
         $.ajax({
-            // url: "https://blog.xiyoulinux.com/api/login",
-            url: "http://127.0.0.1:6789/api/login",
+            url: "https://blog.xiyoulinux.com/api/login",
+            // url: "http://127.0.0.1:6789/api/login",
             type: 'POST',
             data: JSON.stringify(req_data),
             dataType: 'json',
