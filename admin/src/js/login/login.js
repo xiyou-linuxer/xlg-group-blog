@@ -15,13 +15,12 @@ layui.use(['element', 'layer'], function () {
         let password = $("input[name='password']").val();
 
         if (username === '' || password === '') {
-            showMsg('用户名或密码不能为空');
+            layer.msg('用户名或密码不能为空');
         }
 
         let req_data = {};
         req_data.username = username;
         req_data.password = password;
-        console.log(req_data);
 
         $.ajax({
             url: "https://blog.xiyoulinux.com/api/login",
@@ -41,18 +40,15 @@ layui.use(['element', 'layer'], function () {
             },
             success: function (data) {
                 if (data.code !== 0) {
-                    showMsg(data.msg);
+                    layer.msg(data.msg);
                 } else {
-                    layer.open({
-                        content: data.msg,
-                    });
-                    console.log(data.data)
+                    layer.msg(data.msg)
                     window.localStorage.setItem('token',data.data)
                     $(location).attr('href', './user.html');
                 }
             },
             error: function (err) {
-                showMsg('服务器异常')
+                layer.msg('服务器异常')
             }
         });
         return false;

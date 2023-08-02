@@ -49,7 +49,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
         if (data.code !== 0) {
             showMsg(data.msg);
         } else {
-            console.log(data);
+            // console.log(data);
             uid = data.data.uid;
             $('#user_link').attr("href", domain + "/user/" + data.data.uid);
             $('#user_name').text(data.data.username);
@@ -80,7 +80,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
         }
     };
     let errorDealWith = function (err) {
-        console.log(err);
+        // console.log(err);
 
         let errJson = err.responseJSON;
         if (errJson == null || errJson.msg == null) {
@@ -128,7 +128,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
 
     element.on('tab(tab)',function (data) {
         // 获取博客类型
-        console.log(this.id)
+        // console.log(this.id)
         if(this.id === "blogSetting"){
             let getBlogTypeAjax = getBlogTypeSelect('blog_type');
             let getUserBlogAjax;
@@ -141,7 +141,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
                         withCredentials: true
                     },
                     success: function (data) {
-                        console.log(data);
+                        // console.log(data);
                         blogId = data.data.blogType;
                         // 渲染数据
                         layui.form.val('type', {'blog_type': data.data.blogType});
@@ -171,7 +171,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
         },
         crossDomain: true,
         success: function (data) {
-            console.log(data);
+            // console.log(data);
             // 渲染数据
             grades = data.data;
             const gradeList = document.getElementById('grade-list');
@@ -238,7 +238,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
         done: function(res){
             $('#avatar-image').show();
             //上传完毕回调
-            console.log(res);
+            // console.log(res);
             if(res.code === 0) {
                 $('#uploadPreview').attr('src', res.data.src);
                 $('#uploadText').html('上传成功');
@@ -263,8 +263,9 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
 
     // 更新博客参数
     $(document).on('click', '#submit', function () {
-        console.log(table.cache['type_param']);
+        // console.log(table.cache['type_param']);
         // let blog_type = form.val('type').blog_type;
+        // console.log(blogId);
         let blog_type = blogId;
         let params = table.cache['type_param'];
         let reqParams = {};
@@ -283,7 +284,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
         let request = {};
         request.blogType = blog_type;
         request.params = reqParams;
-        console.log(request);
+        // console.log(request);
 
         $.ajax({
             url: domain + "/api/user/blog/params",
@@ -295,7 +296,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
             dataType: 'json',
             contentType: 'application/json;charset=UTF-8',
             success: function (data) {
-                console.log(data);
+                // console.log(data);
                 showMsg(data.msg);
                 // 重新渲染
                 table.render(formRender(getUrl(request.blogType)));
@@ -309,7 +310,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
     });
 
     $(document).on('click', '#updateBlog', function () {
-        let blog_type = form.val('type').blog_type;
+        let blog_type = blogId;
         if (blog_type == null || blog_type === '') {
             layer.msg('博客类型不能为空');
             return;
@@ -327,6 +328,9 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
             before: function () {
                 showMsg("开启抓取");
             },
+            success: function () {
+                showMsg("抓取完毕");
+            },
             error: function (err) {
                 errorDealWith(err);
             }
@@ -334,7 +338,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
     });
 
     $(document).on('click', '#updateBlogs', function () {
-        console.log("wait");
+        // console.log("wait");
         $.ajax({
             url: domain + "/api/schedule",
             type: 'GET',
@@ -343,6 +347,9 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
             },
             before: function () {
                 showMsg("开启抓取");
+            },
+            success: function () {
+                showMsg("抓取完毕");
             },
             error: function (err) {
                 errorDealWith(err);
@@ -374,7 +381,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
         request.currentPasswd = currentPassword;
         request.newPasswd = newPassword;
 
-        console.log(request);
+        // console.log(request);
 
         $.ajax({
             url: domain + "/api/user/passwd",
@@ -386,7 +393,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
             dataType: 'json',
             contentType: 'application/json;charset=UTF-8',
             success: function (data) {
-                console.log(data);
+                // console.log(data);
                 showMsg(data.msg);
             },
             error: function (err) {
@@ -407,7 +414,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
             dataType: 'json',
             contentType: 'application/json;charset=UTF-8',
             success: function (data) {
-                console.log(data);
+                // console.log(data);
                 showMsg(data.msg);
                 setTimeout(
                     function () {
@@ -468,7 +475,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
             dataType: 'json',
             contentType: 'application/json;charset=UTF-8',
             success: function (data) {
-                console.log(data);
+                // console.log(data);
                 userListData = data.data;
                 table.render({
                     elem: "#user-list",
@@ -541,7 +548,7 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
 
     // 添加新成员
     form.on('submit(addMember)', function(data){
-        console.log(data.field)
+        // console.log(data.field)
         // TODO: 发送表单数据到后端进行处理
         let request = {};
         request.username = data.field.username;
@@ -560,19 +567,19 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
             success: function (data) {
                 // 渲染数据
                 console.log("add success...")
+                layer.msg('添加成功');
             },
             error: function (err) {
                 errorDealWith(err);
             }
         });
-        layer.msg('添加成功');
         return false;
     });
 
     const clearCookie = () => {
-        var keys = document.cookie.match(/[^ =;]+(?==)/g);
+        let keys = document.cookie.match(/[^ =;]+(?==)/g);
         if (keys) {
-            for (var i = keys.length; i--; ) {
+            for (let i = keys.length; i--;) {
                 document.cookie =
                     keys[i] + "=0;expires=" + new Date(0).toUTCString() + ";max-age=0";
             }
