@@ -21,7 +21,7 @@ mvnw.cmd
 .mtj.tmp/
 
 # Package Files #
-# *.jar
+*.jar
 *.war
 *.nar
 *.ear
@@ -36,3 +36,7 @@ hs_err_pid*
 logs/ 
 **/target/*
 classes/
+
+server/createDocker/my
+server/createDocker/blog
+server/createDocker/init.sql

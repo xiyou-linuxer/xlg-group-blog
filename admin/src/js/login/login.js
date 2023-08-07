@@ -15,16 +15,16 @@ layui.use(['element', 'layer'], function () {
         let password = $("input[name='password']").val();
 
         if (username === '' || password === '') {
-            showMsg('用户名或密码不能为空');
+            layer.msg('用户名或密码不能为空');
         }
 
         let req_data = {};
         req_data.username = username;
         req_data.password = password;
-        console.log(req_data);
 
         $.ajax({
-            url: "http://groupblog.xcphoenix.top/api/login",
+            url: "https://blog.xiyoulinux.com/api/login",
+            // url: "http://127.0.0.1:6789/api/login",
             type: 'POST',
             data: JSON.stringify(req_data),
             dataType: 'json',
@@ -32,19 +32,23 @@ layui.use(['element', 'layer'], function () {
             xhrFields: {
                 withCredentials: true
             },
+            beforeSend: function(request) {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    request.setRequestHeader('Authorization', 'Bearer 1122');
+                }
+            },
             success: function (data) {
                 if (data.code !== 0) {
-                    showMsg(data.msg);
+                    layer.msg(data.msg);
                 } else {
-                    layer.open({
-                        content: data.msg,
-                    });
-                    document.cookie = "uid=" + data.data;
-                    $(location).attr('href', './admin.html');
+                    layer.msg(data.msg)
+                    window.localStorage.setItem('token',data.data)
+                    $(location).attr('href', './user.html');
                 }
             },
             error: function (err) {
-                showMsg('服务器异常')
+                layer.msg('服务器异常')
             }
         });
         return false;
@@ -54,4 +58,9 @@ layui.use(['element', 'layer'], function () {
         console.log('click')
     });
 
+    function setCookie(name, value, days) {
+        const expires = new Date();
+        expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+        document.cookie = name + '=' + value + ';expires=' + expires.toUTCString() + ';SameSite=None;Secure';
+    }
 });
