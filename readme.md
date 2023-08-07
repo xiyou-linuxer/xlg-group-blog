@@ -8,6 +8,9 @@
 
 为了有一个较好浏览体验，没有自行造轮子编写前端页面，在 Hexo 热度最高的主题之一：[***hexo-theme-next***](https://github.com/iissnan/hexo-theme-next) 的基础上进行二次修改，并结合 Thymeleaf 完成了博客数据的展示。
 
+## Maintainer
+[@yeyr2](https://github.com/yeyr2)
+
 ## 项目结构
 
 项目分为管理端和页面展示部分。
