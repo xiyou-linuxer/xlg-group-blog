@@ -81,4 +81,26 @@ public interface UserManager {
      * @return
      */
     User checkUser(long uid);
+
+    /**
+     * 修改用户权限
+     * @param uid 用户uid
+     * @param cid 要修改的权限
+     * @return  修改结果
+     */
+    boolean modifyPermissions(long uid,int cid);
+
+    /**
+     * 删除用户
+     * @param uid
+     * @return
+     */
+    boolean removeMember(Long uid);
+
+    /**
+     * 设置用户的博客为null
+     * @param uid
+     * @return
+     */
+    boolean updateUserArgToNULL(long uid);
 }

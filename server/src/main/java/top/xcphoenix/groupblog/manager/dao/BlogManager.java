@@ -1,5 +1,6 @@
 package top.xcphoenix.groupblog.manager.dao;
 
+import top.xcphoenix.groupblog.expection.blog.BlogParseException;
 import top.xcphoenix.groupblog.model.dao.Blog;
 import top.xcphoenix.groupblog.model.vo.BlogData;
 
@@ -57,6 +58,13 @@ public interface BlogManager {
     BlogData getBlog(long blogId);
 
     /**
+     * 获取用户博客数量
+     * @param uid 用户id
+     * @return
+     */
+    long getBlogNumAsUser(long uid);
+
+    /**
      * 获取附近时间的博客
      *
      * @param time 时间
@@ -73,4 +81,18 @@ public interface BlogManager {
      */
     List<Blog> getNearbyBlogsAsUser(Timestamp time, long uid);
 
+    /**
+     * 删除某人某一篇博客
+     * @param uid 用uid
+     * @param blogId 博客id
+     * @return 结果
+     */
+    Boolean removeMemberBlog(long uid, long blogId) throws BlogParseException;
+
+    /**
+     *
+     * @param uid
+     * @return
+     */
+    Boolean removeMemberBlogs(long uid) throws BlogParseException;
 }

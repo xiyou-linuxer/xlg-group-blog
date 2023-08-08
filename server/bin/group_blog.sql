@@ -15,7 +15,6 @@ create table blog
     constraint UNI_SOURCE_ID
         unique (source_id)
 )
-    engine = MyISAM
     collate = utf8mb4_unicode_520_ci;
 
 create fulltext index title

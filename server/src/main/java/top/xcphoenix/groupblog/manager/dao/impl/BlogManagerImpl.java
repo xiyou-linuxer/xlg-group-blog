@@ -1,7 +1,16 @@
 package top.xcphoenix.groupblog.manager.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import top.xcphoenix.groupblog.expection.blog.BlogParseException;
 import top.xcphoenix.groupblog.mybatis.mapper.BlogMapper;
 import top.xcphoenix.groupblog.mybatis.mapper.UserMapper;
 import top.xcphoenix.groupblog.model.dao.Blog;
@@ -20,12 +29,15 @@ import java.util.List;
 @Service
 public class BlogManagerImpl implements BlogManager {
 
-    private BlogMapper blogMapper;
-    private UserMapper userMapper;
+    BlogMapper blogMapper;
+    UserMapper userMapper;
+    PlatformTransactionManager transactionManager;
 
-    public BlogManagerImpl(BlogMapper blogMapper, UserMapper userMapper) {
+    @Autowired
+    public BlogManagerImpl(BlogMapper blogMapper, UserMapper userMapper, PlatformTransactionManager transactionManager) {
         this.blogMapper = blogMapper;
         this.userMapper = userMapper;
+        this.transactionManager = transactionManager;
     }
 
     @Override
@@ -62,6 +74,11 @@ public class BlogManagerImpl implements BlogManager {
     }
 
     @Override
+    public long getBlogNumAsUser(long uid){
+        return blogMapper.getBlogNumAsUser(uid);
+    }
+
+    @Override
     public List<Blog> getNearbyBlogs(Timestamp time) {
         return blogMapper.getNearbyBlogs(time, null);
     }
@@ -69,6 +86,57 @@ public class BlogManagerImpl implements BlogManager {
     @Override
     public List<Blog> getNearbyBlogsAsUser(Timestamp time, long uid) {
         return blogMapper.getNearbyBlogs(time, uid);
+    }
+
+    @Override
+    public Boolean removeMemberBlog(long uid, long blogId) throws BlogParseException {
+        TransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        TransactionStatus transactionStatus = transactionManager.getTransaction(transactionDefinition);
+        try {
+            Timestamp blogPubTime = blogMapper.getBlogPubTime(uid);
+            if(blogPubTime == null){
+                throw new BlogParseException("获取时间失败");
+            }
+            Boolean remove = blogMapper.removeMemberBlog(uid, blogId);
+            if(!remove){
+                throw new BlogParseException("删除blog失败");
+            }
+            //修改时间
+            int count = userMapper.mandatoryUpdateLastPubTime(blogPubTime, uid);
+            if(count != 1){
+                throw new BlogParseException("修改时间失败");
+            }
+            transactionManager.commit(transactionStatus);
+        } catch (BlogParseException e) {
+            transactionManager.rollback(transactionStatus);
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public Boolean removeMemberBlogs(long uid) throws BlogParseException {
+        TransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+        TransactionStatus transactionStatus = transactionManager.getTransaction(transactionDefinition);
+
+        try {
+            boolean result = blogMapper.removeMemberBlogs(uid);
+            if (!result) {
+                throw new BlogParseException("Failed to remove member blogs：删除blog出错");
+            }
+            Timestamp timestamp = new Timestamp(0L);
+            int updateResult = userMapper.mandatoryUpdateLastPubTime(timestamp, uid);
+            if (updateResult != 1) {
+                throw new BlogParseException("Failed to remove member blogs:更新时间出错");
+            }
+            transactionManager.commit(transactionStatus);
+        } catch (BlogParseException e) {
+            transactionManager.rollback(transactionStatus);
+            throw e;
+        }
+
+        return true;
     }
 
 }

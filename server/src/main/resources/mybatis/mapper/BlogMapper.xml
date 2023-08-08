@@ -19,8 +19,8 @@
 		)
 	
 	</insert>
-	
-	<select id="exists" resultType="boolean">
+
+    <select id="exists" resultType="boolean">
 		SELECT COUNT(*)
 		FROM blog
 		WHERE source_id = #{sourceId}
@@ -88,6 +88,14 @@
 				LEFT JOIN `user` ON `user`.`uid` = P.`uid`
 				LEFT JOIN `category` ON `category`.`category_id` = `user`.`category_id`
 	</select>
+
+	<select id="getBlogNum" resultType="java.lang.Long">
+		SELECT COUNT(*) from blog;
+	</select>
+
+	<select id="getBlogNumAsUser" resultType="java.lang.Long">
+		SELECT COUNT(*) from blog where uid = #{uid};
+	</select>
 	
 	<select id="getNearbyBlogs" resultType="top.xcphoenix.groupblog.model.dao.Blog">
 		(
@@ -118,5 +126,17 @@
 				1
 		)
 	</select>
-	
+
+
+	<delete id="removeMemberBlogs">
+		DELETE from `blog` where `uid` = #{uid};
+	</delete>
+
+	<delete id="removeMemberBlog">
+		DELETE from `blog` where `uid` = #{uid} and `blog_id` = #{blogId};
+	</delete>
+
+	<select id="getBlogPubTime" resultType="java.sql.Timestamp">
+		SELECT pub_time from blog where blog_id = #{blog_id};
+	</select>
 </mapper>

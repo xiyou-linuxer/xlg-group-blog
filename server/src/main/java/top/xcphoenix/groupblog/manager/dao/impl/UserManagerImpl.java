@@ -101,5 +101,20 @@ public class UserManagerImpl implements UserManager {
         return userMapper.checkUser(uid);
     }
 
+    @Override
+    public boolean modifyPermissions(long uid, int authority) {
+        return userMapper.modifyPermissions(uid,authority);
+    }
+
+    @Override
+    public boolean removeMember(Long uid) {
+        return userMapper.removeMember(uid);
+    }
+
+    @Override
+    public boolean updateUserArgToNULL(long uid) {
+        return userMapper.updateUserArgToNULL(uid);
+    }
+
 
 }

@@ -78,4 +78,9 @@ public interface BlogMapper {
      */
     List<Blog> getNearbyBlogs(@Param("time") Timestamp time, @Param("uid") Long uid);
 
+    Boolean removeMemberBlogs(@Param("uid") long uid);
+
+    Boolean removeMemberBlog(@Param("uid")long uid,@Param("blogId") long blogId);
+
+    Timestamp getBlogPubTime(@Param("blog_id") long blog_id);
 }

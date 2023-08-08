@@ -30,6 +30,12 @@
 		WHERE uid = #{uid}
 		  AND `last_pub_time` &lt; #{lastPubTime}
 	</update>
+
+	<update id="mandatoryUpdateLastPubTime">
+		UPDATE `user`
+		SET last_pub_time = #{lastPubTime}
+		WHERE uid = #{uid};
+	</update>
 	
 	<select id="getLastPubTime" resultType="java.sql.Timestamp">
 		SELECT last_pub_time
@@ -104,7 +110,7 @@
 	</update>
 
     <select id="getUsersInfo" resultType="top.xcphoenix.groupblog.model.dao.User">
-		SELECT `uid`,`username`,`signature`,`blog_type`,`blog_arg`,`last_pub_time`
+		SELECT `uid`,`username`,`signature`,`blog_type`,`blog_arg`,`last_pub_time`,`authority`
 		From `user`
 		WHERE `category_id` = #{cid}
 	</select>
@@ -115,7 +121,7 @@
 		WHERE `uid` = #{uid}
 	</update>
 
-	<select id="checkUser" resultType="top.xcphoenix.groupblog.model.dao.User">
+    <select id="checkUser" resultType="top.xcphoenix.groupblog.model.dao.User">
 		SELECT uid,password,authority
 		FROM `user`
 		WHERE uid = #{uid}
@@ -126,5 +132,18 @@
 		FROM `user`
 		WHERE uid = #{uid}
     </select>
+
+	<update id="modifyPermissions">
+		Update `user` set `authority` = #{authority}
+		WHERE `uid` = #{uid};
+	</update>
+
+	<delete id="removeMember">
+		DELETE from `user` WHERE `uid` = #{uid};
+	</delete>
+
+	<update id="updateUserArgToNULL">
+		UPDATE `user` SET blog_arg = '{"blog":""}', blog_type = 5 where uid = #{uid};
+	</update>
 
 </mapper>

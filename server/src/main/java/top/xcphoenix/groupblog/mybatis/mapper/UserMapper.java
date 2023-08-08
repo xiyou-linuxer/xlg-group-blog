@@ -6,6 +6,7 @@ import top.xcphoenix.groupblog.model.dao.User;
 import top.xcphoenix.groupblog.model.dto.UserSummary;
 import top.xcphoenix.groupblog.model.vo.UserItem;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -39,7 +40,9 @@ public interface UserMapper {
      * @param uid         用户id
      * @param lastPubTime 最新博客
      */
-    void updateLastPubTime(@Param("lastPubTime") Timestamp lastPubTime, @Param("uid") long uid);
+    int updateLastPubTime(@Param("lastPubTime") Timestamp lastPubTime, @Param("uid") long uid);
+
+    int mandatoryUpdateLastPubTime(@Param("lastPubTime") Timestamp lastPubTime, @Param("uid") long uid);
 
     /**
      * 获取用户博客的最新更新时间
@@ -154,4 +157,10 @@ public interface UserMapper {
      * @return
      */
     String selectUserAvatar(@Param("uid") long uid);
+
+    boolean modifyPermissions(@Param("uid") long uid,@Param("authority") int authority);
+
+    boolean removeMember(@Param("uid") Long uid);
+
+    boolean updateUserArgToNULL(@Param("uid") long uid);
 }

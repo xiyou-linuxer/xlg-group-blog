@@ -77,6 +77,9 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
             }
             $("input[name='qq']").attr('value', data.data.qq);
             $("textarea[name='signature']").val(data.data.signature);
+            if(data.data.authority !== "ADMIN" && data.data.authority !== 2){
+                $('#adminSetting').hide();
+            }
         }
     };
     let errorDealWith = function (err) {
@@ -357,6 +360,143 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
         });
     });
 
+    // 删除选定的博客
+    $(document).on('click', '#removeMemberBlog', function () {
+        layer.open({
+            title: '删除选定的博客',
+            type: 1,
+            content: $('#removeMemberBlogForm').html(),
+            area: ['500px', '250px'],
+            btn: [],
+            success: function (layero, index) {
+                // 表单渲染
+                form.render();
+                form.on('submit(submitForm)', function (data) {
+                    let uid = data.field.uid;
+                    let blogId = data.field.blogId;
+                    submitAdminForm(domain+"/api/removeMember/"+uid+"/"+blogId,"删除成员blog");
+                    layer.close(index);
+                    return false; // 阻止表单默认提交
+                });
+
+                // 监听取消按钮点击事件
+                $('#btnCancel').on('click', function () {
+                    layer.close(index);
+                });
+            }
+        });
+    });
+
+    // 删除选定自己博客
+    $(document).on('click', '#removeBlog', function () {
+        layer.open({
+            title: '删除选定自己博客',
+            type: 1,
+            content: $('#removeBlogForm').html(),
+            area: ['500px', '200px'],
+            btn: [],
+            success: function (layero, index) {
+                // 表单渲染
+                form.render();
+                // 监听表单提交
+                form.on('submit(submitForm)', function (data) {
+                    let blogId = data.field.blogId;
+                    submitAdminForm(domain+"/api/removeMember/"+uid+"/"+blogId,"删除自己blog:"+blogId);
+                    layer.close(index);
+                    return false; // 阻止表单默认提交
+                });
+                // 监听取消按钮点击事件
+                $('#btnCancel').on('click', function () {
+                    layer.close(index);
+                });
+            }
+        });
+    });
+
+    // 删除某人所有博客
+    $(document).on('click', '#removeMemberBlogs', function () {
+        layer.open({
+            title: '删除某人所有博客',
+            type: 1,
+            content: $('#removeMemberBlogsForm').html(),
+            area: ['500px', '200px'],
+            btn: [],
+            success: function (layero, index) {
+                // 表单渲染
+                form.render();
+                // 监听表单提交
+                form.on('submit(submitForm)', function (data) {
+                    let uid = data.field.uid;
+                    submitAdminForm(domain+"/api/removeMemberBlog/"+uid,"删除成员AllBlogs");
+                    layer.close(index);
+                    return false; // 阻止表单默认提交
+                });
+                // 监听取消按钮点击事件
+                $('#btnCancel').on('click', function () {
+                    layer.close(index);
+                });
+            }
+        });
+    });
+
+    // 移除某人
+    $(document).on('click', '#removeMember', function () {
+        layer.open({
+            title: '移除某人',
+            type: 1,
+            content: $('#removeMemberForm').html(),
+            area: ['500px', '200px'],
+            btn: [],
+            success: function (layero, index) {
+                // 表单渲染
+                form.render();
+                // 监听表单提交
+                form.on('submit(submitForm)', function (data) {
+                    let uid = data.field.uid;
+                    submitAdminForm(domain+"api/user/removeMember/"+uid,"移除成员"+uid);
+                    layer.close(index);
+                    return false; // 阻止表单默认提交
+                });
+                // 监听取消按钮点击事件
+                $('#btnCancel').on('click', function () {
+                    layer.close(index);
+                });
+            }
+        });
+    });
+
+    // 授予某人权限
+    $(document).on('click', '#modifyPermissions', function () {
+        layer.open({
+            title: '授予某人权限',
+            type: 1,
+            content: $('#modifyPermissionsForm').html(),
+            area: ['500px', '250px'],
+            btn: [],
+            success: function (layero, index) {
+                // 表单渲染
+                form.render();
+                // 监听表单提交
+                form.on('submit(submitForm)', function (data) {
+                    let uid = data.field.uid;
+                    let permission = data.field.permission;
+                    if(permission == null || permission === ""){
+                        // console.log(data)
+                        showMsg("权限等级为空")
+                        return false;
+                    }
+                    submitAdminForm(domain+"api/user/modifyPermissions/"+uid+"/"+permission,"授予成员"+permission+"级权限");
+                    layer.close(index);
+                    return false; // 阻止表单默认提交
+                });
+                // 监听取消按钮点击事件
+                $('#btnCancel').on('click', function () {
+                    layer.close(index);
+                });
+            }
+        });
+    });
+
     // 修改密码
     $(document).on('click', '#passwd_submit', function () {
         let pattern = /^(?![\d]+$)(?![a-zA-Z]+$)(?![^\da-zA-Z]+$).{6,20}$/;
@@ -598,4 +738,29 @@ layui.use(['table', 'form', 'element', 'layer','upload','jquery'], function () {
             });
         });
     }
+
+    let submitAdminForm = function (url,data) {
+        $.ajax({
+            url: url,
+            type: 'GET',
+            xhrFields: {
+                withCredentials: true
+            },
+            before: function () {
+                showMsg("开启"+data);
+            },
+            success: function (result) {
+                console.log(result)
+                if(result.code !== 0){
+                    showMsg("操作失败")
+                }else{
+                    showMsg(data+"完毕");
+                }
+            },
+            error: function (err) {
+                errorDealWith(err);
+            }
+        });
+    }
 });
+

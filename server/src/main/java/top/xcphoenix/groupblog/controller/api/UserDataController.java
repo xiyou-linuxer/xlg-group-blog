@@ -5,14 +5,12 @@ import com.auth0.jwt.JWT;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.CacheControl;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import top.xcphoenix.groupblog.annotation.AdminAuth;
 import top.xcphoenix.groupblog.annotation.UserAuth;
 import top.xcphoenix.groupblog.expection.blog.BlogArgException;
+import top.xcphoenix.groupblog.manager.dao.BlogManager;
 import top.xcphoenix.groupblog.manager.dao.UserManager;
 import top.xcphoenix.groupblog.model.Result;
 import top.xcphoenix.groupblog.model.dao.BlogType;
@@ -24,13 +22,11 @@ import top.xcphoenix.groupblog.service.api.BlogTypeService;
 import top.xcphoenix.groupblog.service.api.UserService;
 import top.xcphoenix.groupblog.utils.UrlUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +48,7 @@ public class UserDataController {
     private BlogTypeService blogTypeService;
     private CategoryMapper categoryMapper;
     private BlogTypeMapper blogTypeMapper;
+    private BlogManager blogManager;
     @Value("${picture.service-name}")
     private String serviceName;
     @Value("${picture.address}")
@@ -62,12 +59,14 @@ public class UserDataController {
                               UserManager userManager,
                               BlogTypeService blogTypeService,
                               CategoryMapper categoryMapper,
-                              BlogTypeMapper blogTypeMapper) {
+                              BlogTypeMapper blogTypeMapper,
+                              BlogManager blogManager) {
         this.userService = userService;
         this.userManager = userManager;
         this.blogTypeService = blogTypeService;
         this.categoryMapper = categoryMapper;
         this.blogTypeMapper = blogTypeMapper;
+        this.blogManager= blogManager;
     }
 
     @GetMapping("/data")
@@ -180,15 +179,16 @@ public class UserDataController {
                 case 3:
                     urlUtil = new UrlUtil(user.getBlogArg(), blogType);
                     String feedUrl = urlUtil.getFeedUrl();
-                    feedUrl = feedUrl.substring(0, feedUrl.lastIndexOf("/"));
+                    if(feedUrl.contains("/")){
+                        feedUrl = feedUrl.substring(0, feedUrl.lastIndexOf("/"));
+                    }
                     user.setBlogArg(feedUrl);
                     break;
                 case 4:
                 case 5:
                     urlUtil = new UrlUtil(user.getBlogArg(), blogType);
-                    overviewUrl = urlUtil.getOverviewUrl();
-                    user.setBlogArg(overviewUrl);
-                    break;
+                    feedUrl = urlUtil.getFeedUrl();
+                    user.setBlogArg(feedUrl);
                 default:
                     break;
             }
@@ -280,7 +280,7 @@ public class UserDataController {
                 user.setBlogArg("{" + arg +"}");
                 break;
             case 5:
-                user.setBlogArg("{}");
+                user.setBlogArg("{\"blog\":\"\"}");
                 break;
             default:
                 log.info("不进行任何操作(暂时至少...)");
@@ -300,4 +300,32 @@ public class UserDataController {
 
         return Result.success(null);
     }
+
+    @AdminAuth
+    @GetMapping("/modifyPermissions/{uid}/{authority}")
+    public Result<Void> modifyPermissions(@PathVariable("uid") long uid,@PathVariable("authority") int authority) {
+        boolean result = userManager.modifyPermissions(uid, authority);
+        if(!result){
+            return  Result.error(-1);
+        }
+        return  Result.success(null);
+    }
+
+    // 删除用户数据前需要先去删除博客,否则只是设置为不再获取博客
+    @AdminAuth
+    @GetMapping("/removeMember/{uid}")
+    public Result<Void> removeMember(@PathVariable("uid") long uid) {
+        long blogNumAsUser = blogManager.getBlogNumAsUser(uid);
+        boolean result;
+        if(blogNumAsUser == 0){
+            result = userManager.removeMember(uid);
+        }else{
+            result = userManager.updateUserArgToNULL(uid);
+        }
+        if(!result){
+            return  Result.error(-1);
+        }
+        return  Result.success(null);
+    }
+
 }

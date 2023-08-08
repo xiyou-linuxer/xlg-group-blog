@@ -40,3 +40,4 @@ classes/
 server/createDocker/my
 server/createDocker/blog
 server/createDocker/init.sql
+server/target

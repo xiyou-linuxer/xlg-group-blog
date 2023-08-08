@@ -66,6 +66,7 @@
                             <ul class="layui-tab-title">
                                 <li class="layui-this">我的资料</li>
                                 <li id="blogSetting">博客设置</li>
+                                <li id="adminSetting">admin设置</li>
                                 <li>密码管理</li>
                             </ul>
                             <div class="layui-tab-content">
@@ -120,10 +121,24 @@
                                         <div class="layui-form-item">
                                             <button type="button" class="layui-btn" id="submit">提交</button>
                                             <button type="button" class="layui-btn" id="updateBlog">获取自己博客</button>
-                                            <button type="button" class="layui-btn" id="updateBlogs">获取所有人博客</button>
+                                            <button type="button" class="layui-btn" id="removeBlog">删除选定自己博客（选择博客）</button>
                                         </div>
                                         <span>提交后才能抓取！！！</span>
                                     </form>
+                                </div>
+                                <div class="layui-tab-item">
+                                    <span>SP:删除用户数据前需要先去删除博客,否则只是设置为不再获取博客</span>
+                                    <div class="layui-form-item">
+                                        <button type="button" class="layui-btn" id="updateBlogs">获取所有人博客</button>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <button type="button" class="layui-btn" id="removeMemberBlogs">删除某人所有博客</button>
+                                        <button type="button" class="layui-btn" id="removeMemberBlog">删除选定的博客（选择博客）</button>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <button type="button" class="layui-btn" id="modifyPermissions">授予某人权限</button>
+                                        <button type="button" class="layui-btn" id="removeMember">移除某人</button>
+                                    </div>
                                 </div>
                                 <div class="layui-tab-item">
                                     <form class="layui-form layui-form-pane" action="">
@@ -219,5 +234,102 @@
 </div>
 <script src="lib/layui/layui.js"></script>
 <script src="js/admin/user.js"></script>
+<!-- 弹出层 -->
+<script type="text/html" id="removeMemberBlogForm">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户id</label>
+            <div class="layui-input-block">
+                <input type="text" name="uid" required lay-verify="required" placeholder="请输入用户id" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">博客id</label>
+            <div class="layui-input-block">
+                <input type="text" name="blogId" required lay-verify="required" placeholder="请输入博客id" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submitForm">提交</button>
+                <button class="layui-btn layui-btn-primary" id="btnCancel">取消</button>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="removeBlogForm">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">博客id</label>
+            <div class="layui-input-block">
+                <input type="text" name="blogId" required lay-verify="required" placeholder="请输入博客id" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submitForm">提交</button>
+                <button class="layui-btn layui-btn-primary" id="btnCancel">取消</button>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="removeMemberBlogsForm">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户id</label>
+            <div class="layui-input-block">
+                <input type="text" name="uid" required lay-verify="required" placeholder="请输入用户id" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submitForm">提交</button>
+                <button class="layui-btn layui-btn-primary" id="btnCancel">取消</button>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="removeMemberForm">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户id</label>
+            <div class="layui-input-block">
+                <input type="text" name="uid" required lay-verify="required" placeholder="请输入用户id" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submitForm">提交</button>
+                <button class="layui-btn layui-btn-primary" id="btnCancel">取消</button>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="modifyPermissionsForm">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户id</label>
+            <div class="layui-input-block">
+                <input type="text" name="uid" required lay-verify="required" placeholder="请输入用户id" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">权限等级</label>
+            <div class="layui-input-block">
+                <select id="Permission" name="permission" lay-filter="type_select">
+                    <option value="">请选择权限等级</option>
+                    <option value="1">普通用户</option>
+                    <option value="2">管理员</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="submitForm">提交</button>
+                <button class="layui-btn layui-btn-primary" id="btnCancel">取消</button>
+            </div>
+        </div>
+    </div>
+</script>
 </body>
 </html>
